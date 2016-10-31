@@ -9,10 +9,10 @@
 import Foundation
 
 class ScheduleDetailsAboutRuns {
-    
-    private var data:[NSMutableDictionary]?
-    
-    func filter(search:String?) -> [NSMutableDictionary]? {
+
+    private var data: [NSMutableDictionary]?
+
+    func filter(search: String?) -> [NSMutableDictionary]? {
         if (search != nil) {
             if (search!.isEmpty == false) {
                 // Filter data
@@ -29,7 +29,7 @@ class ScheduleDetailsAboutRuns {
         return self.data
     }
 
-    private func readScheduledataDetailsAll (filter : String?) {
+    private func readScheduledataDetailsAll (filter: String?) {
         var row: NSMutableDictionary?
         var data = [NSMutableDictionary]()
         self.data = nil
@@ -38,7 +38,7 @@ class ScheduleDetailsAboutRuns {
             let hiddenID = SharingManagerSchedule.sharedInstance.getSchedule()[i].hiddenID
             let server = SharingManagerConfiguration.sharedInstance.getoffSiteserver(hiddenID)
             let localCatalog = SharingManagerConfiguration.sharedInstance.getlocalCatalog(hiddenID)
-            
+
             if (filter == server || filter == nil) {
                 row = [
                     "offsiteServer":server,
@@ -48,12 +48,12 @@ class ScheduleDetailsAboutRuns {
                     "resultExecuted":"" ]
                 data.append(row!)
                 if (input[i].executed.count > 0) {
-                    let contstr:String = String(input[i].executed.count) + " task(s)"
+                    let contstr: String = String(input[i].executed.count) + " task(s)"
                     row!.setValue(contstr, forKey: "dateExecuted")
                     for j in 0 ..< input[i].executed.count {
                         let dict = input[i].executed[j]
-                        let dateExecuted:String = (dict.value(forKey: "dateExecuted") as? String)!
-                        let resultExecuted:String = (dict.value(forKey: "resultExecuted") as? String)!
+                        let dateExecuted: String = (dict.value(forKey: "dateExecuted") as? String)!
+                        let resultExecuted: String = (dict.value(forKey: "resultExecuted") as? String)!
                         let rowdetail: NSMutableDictionary = [
                             "dateExecuted":dateExecuted,
                             "resultExecuted":resultExecuted]
@@ -67,10 +67,9 @@ class ScheduleDetailsAboutRuns {
         }
         self.data = data
     }
-    
+
     init () {
         self.readScheduledataDetailsAll(filter: nil)
     }
 
-    
 }

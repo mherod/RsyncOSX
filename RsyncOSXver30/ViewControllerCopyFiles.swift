@@ -9,30 +9,29 @@
 import Foundation
 import Cocoa
 
-class ViewControllerCopyFiles : NSViewController, UpdateProgress, RefreshtableViewtabMain, StartStopProgressIndicatorViewBatch, Information,  DismissViewController, NSSearchFieldDelegate, GetPath {
-    
+class ViewControllerCopyFiles: NSViewController, UpdateProgress, RefreshtableViewtabMain, StartStopProgressIndicatorViewBatch, Information, DismissViewController, NSSearchFieldDelegate, GetPath {
+
     // Object to hold search data
-    var copyObject : CopyFiles?
+    var copyObject: CopyFiles?
     // Index of selected row
-    var index:Int?
+    var index: Int?
     // Delegate for getting index from Execute view
-    weak var index_delegate:SendSelecetedIndex?
+    weak var index_delegate: SendSelecetedIndex?
     // Info about server and remote catalogs
     @IBOutlet weak var server: NSTextField!
     @IBOutlet weak var rcatalog: NSTextField!
-    
+
     // rsync task
-    var rsync:Bool = false
-    var estimated:Bool = false
-    
+    var rsync: Bool = false
+    var estimated: Bool = false
+
     // Information about rsync output
     // self.presentViewControllerAsSheet(self.ViewControllerInformation)
     lazy var ViewControllerInformation: NSViewController = {
         return self.storyboard!.instantiateController(withIdentifier: "StoryboardInformationCopyFilesID")
             as! NSViewController
     }()
-    
-    
+
     // Proctocol function RefreshtableViewtabMain
     // Do a refresh of table
     func refreshInMain() {
@@ -41,7 +40,7 @@ class ViewControllerCopyFiles : NSViewController, UpdateProgress, RefreshtableVi
             self.tableViewSelect.reloadData()
         })
     }
-    
+
     // Protocol StartStopProgressIndicatorViewBatch
     func stop() {
         self.working.stopAnimation(nil)
@@ -64,17 +63,17 @@ class ViewControllerCopyFiles : NSViewController, UpdateProgress, RefreshtableVi
     func dismiss_view(viewcontroller: NSViewController) {
         self.dismissViewController(viewcontroller)
     }
-    
+
     // Abort button
     @IBAction func Abort(_ sender: NSButton) {
         if (self.copyObject != nil) {
             self.copyObject!.Abort()
         }
     }
-    
+
     @IBOutlet weak var tableViewSelect: NSTableView!
     // Array to display in tableview
-    var filesArray:[String]?
+    var filesArray: [String]?
     // Present the commandstring
     @IBOutlet weak var commandString: NSTextField!
     @IBOutlet weak var remoteCatalog: NSTextField!
@@ -85,8 +84,7 @@ class ViewControllerCopyFiles : NSViewController, UpdateProgress, RefreshtableVi
     // Search field
     @IBOutlet weak var search: NSSearchField!
     @IBOutlet weak var CopyButton: NSButton!
-   
-    
+
     // Do the work
     @IBAction func Copy(_ sender: NSButton) {
         if (self.remoteCatalog.stringValue.isEmpty || self.localCatalog.stringValue.isEmpty) {
@@ -124,15 +122,15 @@ class ViewControllerCopyFiles : NSViewController, UpdateProgress, RefreshtableVi
             Alerts.showInfo("Please select a ROW in Execute window!")
         }
     }
-    
+
     // Protocol UpdateProgress
     // Messages from Process when job is done or in progress
-    
+
     // When Process outputs anything to filehandler
     func FileHandler() {
         // nothing
     }
-    
+
     // When Process terminates
     func ProcessTermination() {
         if (rsync == false) {
@@ -142,22 +140,22 @@ class ViewControllerCopyFiles : NSViewController, UpdateProgress, RefreshtableVi
             self.workingRsync.stopAnimation(nil)
             self.presentViewControllerAsSheet(self.ViewControllerInformation)
         }
-        
+
     }
-    
+
     // Protocol GetPath
-    func pathSet(path: String?, requester : WhichPath) {
+    func pathSet(path: String?, requester: WhichPath) {
         if let setpath = path {
             self.localCatalog.stringValue = setpath
         }
     }
-    
-    private func displayRemoteserver(index:Int) {
+
+    private func displayRemoteserver(index: Int) {
         let hiddenID = SharingManagerConfiguration.sharedInstance.gethiddenID(index: index)
         self.server.stringValue = SharingManagerConfiguration.sharedInstance.getoffSiteserver(hiddenID)
         self.rcatalog.stringValue = SharingManagerConfiguration.sharedInstance.getremoteCatalog(hiddenID)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Setting reference to ViewObject
@@ -172,15 +170,14 @@ class ViewControllerCopyFiles : NSViewController, UpdateProgress, RefreshtableVi
         self.workingRsync.usesThreadedAnimation = true
         self.search.delegate = self
     }
-    
+
     override func viewDidAppear() {
         super.viewDidAppear()
         self.CopyButton.title = "Estimate"
         self.localCatalog.stringValue = ""
     }
-    
 
-    func searchFieldDidStartSearching(_ sender: NSSearchField){
+    func searchFieldDidStartSearching(_ sender: NSSearchField) {
         if (sender.stringValue.isEmpty) {
             GlobalMainQueue.async(execute: { () -> Void in
                 self.filesArray = self.copyObject?.filter(search: nil)
@@ -192,19 +189,19 @@ class ViewControllerCopyFiles : NSViewController, UpdateProgress, RefreshtableVi
                 self.tableViewSelect.reloadData()
             })
         }
-        
+
     }
-    func searchFieldDidEndSearching(_ sender: NSSearchField){
+    func searchFieldDidEndSearching(_ sender: NSSearchField) {
         GlobalMainQueue.async(execute: { () -> Void in
             self.filesArray = self.copyObject?.filter(search: nil)
             self.tableViewSelect.reloadData()
         })
     }
-    
+
 }
 
 extension ViewControllerCopyFiles : NSTableViewDataSource {
-    
+
     func numberOfRows(in tableViewMaster: NSTableView) -> Int {
         if (self.filesArray != nil) {
             return (self.filesArray?.count)!
@@ -214,11 +211,10 @@ extension ViewControllerCopyFiles : NSTableViewDataSource {
     }
 }
 
-
 extension ViewControllerCopyFiles : NSTableViewDelegate {
-    
+
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        var text:String?
+        var text: String?
         var cellIdentifier: String = ""
         let data = self.filesArray![row]
         if tableColumn == tableView.tableColumns[0] {
@@ -231,7 +227,7 @@ extension ViewControllerCopyFiles : NSTableViewDelegate {
         }
         return nil
     }
-    
+
     func tableViewSelectionDidChange(_ notification: Notification) {
         let myTableViewFromNotification = notification.object as! NSTableView
         let indexes = myTableViewFromNotification.selectedRowIndexes
@@ -245,7 +241,7 @@ extension ViewControllerCopyFiles : NSTableViewDelegate {
 }
 
 extension ViewControllerCopyFiles : NSDraggingDestination {
-    
+
     private func draggingEntered(sender: NSDraggingInfo) -> NSDragOperation {
         let sourceDragMask = sender.draggingSourceOperationMask()
         let pboard = sender.draggingPasteboard()
@@ -256,17 +252,17 @@ extension ViewControllerCopyFiles : NSDraggingDestination {
         }
         return NSDragOperation.copy
     }
-    
+
     private func draggingUpdated(sender: NSDraggingInfo) -> NSDragOperation {
         return NSDragOperation.generic
     }
-    
+
     func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
         return true
     }
-    
+
     func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
         return true
     }
-    
+
 }

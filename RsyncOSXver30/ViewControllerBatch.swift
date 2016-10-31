@@ -9,7 +9,7 @@
 import Foundation
 import Cocoa
 
-protocol StartBatch : class  {
+protocol StartBatch : class {
     // Starts batch run
     func runBatch()
     // Aborts executing batch
@@ -18,26 +18,25 @@ protocol StartBatch : class  {
     func closeOperation()
 }
 
+class ViewControllerBatch: NSViewController, RefreshtableViewBatch, StartStopProgressIndicatorViewBatch {
 
-class ViewControllerBatch : NSViewController, RefreshtableViewBatch, StartStopProgressIndicatorViewBatch {
-    
     // If close button or abort is pressed
     // After execute button is pressed, close is abort
-    var close:Bool?
+    var close: Bool?
 
     // Main tableview
     @IBOutlet weak var mainTableView: NSTableView!
     @IBOutlet weak var CloseButton: NSButton!
     @IBOutlet weak var working: NSProgressIndicator!
     @IBOutlet weak var label: NSTextField!
-    
+
     // Iniate start of batchrun
-    weak var startBatch_delegate:StartBatch?
+    weak var startBatch_delegate: StartBatch?
     // Dismisser
-    weak var dismiss_delegate:DismissViewController?
+    weak var dismiss_delegate: DismissViewController?
 
     // ACTIONS AND BUTTONS
-    
+
     @IBAction func Close(_ sender: NSButton) {
         if (self.close!) {
             self.startBatch_delegate?.closeOperation()
@@ -46,14 +45,14 @@ class ViewControllerBatch : NSViewController, RefreshtableViewBatch, StartStopPr
         }
         self.dismiss_delegate?.dismiss_view(viewcontroller: self)
     }
-    
+
     // Execute batch
     @IBAction func Execute(_ sender: NSButton) {
         self.startBatch_delegate?.runBatch()
         self.CloseButton.title = "Abort"
         self.close = false
     }
-    
+
     // PROTOCOL FUNCTIONS
 
     // Protocol RefreshtableViewBatch
@@ -63,14 +62,14 @@ class ViewControllerBatch : NSViewController, RefreshtableViewBatch, StartStopPr
             self.mainTableView.reloadData()
         })
     }
-    
+
     // Protocol StartStopProgressIndicatorViewBatch
     // Stops estimation progressbar when real task is executing
     func stop() {
         self.working.stopAnimation(nil)
         self.label.stringValue = "Working"
     }
-    
+
     func start() {
         self.close = false
         // Starts estimation progressbar when estimation starts
@@ -84,7 +83,7 @@ class ViewControllerBatch : NSViewController, RefreshtableViewBatch, StartStopPr
         self.CloseButton.title = "Close"
         self.close = true
     }
-    
+
     // Initial functions viewDidLoad and viewDidAppear
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -110,7 +109,6 @@ class ViewControllerBatch : NSViewController, RefreshtableViewBatch, StartStopPr
         self.close = true
     }
 
-
 }
 
 extension ViewControllerBatch : NSTableViewDataSource {
@@ -121,17 +119,17 @@ extension ViewControllerBatch : NSTableViewDataSource {
 }
 
 extension ViewControllerBatch : NSTableViewDelegate {
-    
+
     // TableView delegates
     @objc(tableView:objectValueForTableColumn:row:) func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-            let object : NSMutableDictionary = SharingManagerConfiguration.sharedInstance.getbatchDataQueue()![row]
+            let object: NSMutableDictionary = SharingManagerConfiguration.sharedInstance.getbatchDataQueue()![row]
             if ((tableColumn!.identifier) == "estimatedCellID" || (tableColumn!.identifier) == "completedCellID" ) {
                 return object[tableColumn!.identifier] as? Int!
             } else {
                 return object[tableColumn!.identifier] as? String
             }
     }
-    
+
     // Toggling batch
     @objc(tableView:setObjectValue:forTableColumn:row:) func tableView(_ tableView: NSTableView, setObjectValue object: Any?, for tableColumn: NSTableColumn?, row: Int) {
         if (SharingManagerConfiguration.sharedInstance.getConfigurations()[row].task == "backup") {
@@ -139,5 +137,5 @@ extension ViewControllerBatch : NSTableViewDelegate {
             SharingManagerConfiguration.sharedInstance.setBatchYesNo(row)
         }
     }
-    
+
 }

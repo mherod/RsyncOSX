@@ -20,8 +20,8 @@ enum singleWorkTask {
 final class singleTask {
 
     // Work Queue
-    private var work:[singleWorkTask]?
-    
+    private var work: [singleWorkTask]?
+
     // Returns the top most element.
     // Top element is read only
     func readworking() -> singleWorkTask {
@@ -35,7 +35,7 @@ final class singleTask {
             return .empty
         }
     }
-    
+
     // Returns the top most element.
     // Top element is removed
     func working() -> singleWorkTask {
@@ -49,7 +49,7 @@ final class singleTask {
             return .empty
         }
     }
-    
+
     // Single run
     init() {
         self.work = [singleWorkTask]()
@@ -57,9 +57,9 @@ final class singleTask {
         self.work!.append(.execute_singlerun)
         self.work!.append(.done)
     }
-    
+
     // Either Abort or Batchrun
-    init (task:singleWorkTask) {
+    init (task: singleWorkTask) {
         self.work = [singleWorkTask]()
         self.work!.append(task)
     }

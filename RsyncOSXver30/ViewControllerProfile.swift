@@ -14,28 +14,27 @@ protocol AddProfiles : class {
     func newProfile()
 }
 
-
-class ViewControllerProfile : NSViewController {
+class ViewControllerProfile: NSViewController {
 
     // Dismisser
-    weak var dismiss_delegate:DismissViewController?
+    weak var dismiss_delegate: DismissViewController?
     // new Profile
-    weak var newProfile_delegate:AddProfiles?
+    weak var newProfile_delegate: AddProfiles?
     // Array to display in tableview
-    fileprivate var profilesArray:[String]?
+    fileprivate var profilesArray: [String]?
     // The profiles object
-    private var profile:profiles?
+    private var profile: profiles?
     // Selecet profile to use
-    fileprivate var useprofile:String?
+    fileprivate var useprofile: String?
     // New profile
     @IBOutlet weak var newprofile: NSTextField!
-    
+
     // Radiobuttons
     @IBOutlet weak var delete: NSButton!
     @IBOutlet weak var new: NSButton!
     // Table to show profiles
     @IBOutlet weak var profilesTable: NSTableView!
-    
+
     // Setting default profile
     @IBAction func defaultProfile(_ sender: NSButton) {
         SharingManagerConfiguration.sharedInstance.setProfile(profile: nil)
@@ -43,11 +42,11 @@ class ViewControllerProfile : NSViewController {
         self.useprofile = nil
         self.dismiss_delegate?.dismiss_view(viewcontroller: self)
     }
-    
+
     @IBAction func radioButtons(_ sender: NSButton) {
         // Only for grouping radio buttons
     }
-    
+
     @IBAction func close(_ sender: NSButton) {
         if let pvc = self.presenting as? ViewControllertabMain {
             self.newProfile_delegate = pvc
@@ -63,7 +62,7 @@ class ViewControllerProfile : NSViewController {
             self.profilesArray = self.profile!.getDirectorysStrings()
             self.useprofile = nil
             self.dismiss_delegate?.dismiss_view(viewcontroller: self)
-            
+
         } else if (self.new.state == 1) {
             let newprofile = self.newprofile.stringValue
             if (newprofile.isEmpty == false) {
@@ -77,7 +76,7 @@ class ViewControllerProfile : NSViewController {
             self.profilesArray = self.profile!.getDirectorysStrings()
             self.useprofile = nil
             self.dismiss_delegate?.dismiss_view(viewcontroller: self)
-            
+
         } else {
             if let useprofile = self.useprofile {
                 SharingManagerConfiguration.sharedInstance.setProfile(profile: useprofile)
@@ -87,7 +86,6 @@ class ViewControllerProfile : NSViewController {
             self.dismiss_delegate?.dismiss_view(viewcontroller: self)
         }
     }
-
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,11 +98,11 @@ class ViewControllerProfile : NSViewController {
         }
         self.profile = profiles(path: nil)
         self.profilesArray = self.profile!.getDirectorysStrings()
-        
+
         self.profilesTable.target = self
         self.profilesTable.doubleAction = #selector(ViewControllerProfile.tableViewDoubleClick(sender:))
     }
-    
+
     override func viewDidAppear() {
         super.viewDidAppear()
         GlobalMainQueue.async(execute: { () -> Void in
@@ -113,7 +111,7 @@ class ViewControllerProfile : NSViewController {
         self.newprofile.stringValue = ""
     }
 
-    @objc(tableViewDoubleClick:) func tableViewDoubleClick(sender:AnyObject) {
+    @objc(tableViewDoubleClick:) func tableViewDoubleClick(sender: AnyObject) {
         if let pvc = self.presenting as? ViewControllertabMain {
             self.newProfile_delegate = pvc
         }
@@ -127,7 +125,7 @@ class ViewControllerProfile : NSViewController {
 }
 
 extension ViewControllerProfile : NSTableViewDataSource {
-    
+
     func numberOfRows(in tableViewMaster: NSTableView) -> Int {
         if (self.profilesArray != nil) {
             return self.profilesArray!.count
@@ -137,11 +135,10 @@ extension ViewControllerProfile : NSTableViewDataSource {
     }
 }
 
-
 extension ViewControllerProfile : NSTableViewDelegate {
-    
+
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        var text:String?
+        var text: String?
         var cellIdentifier: String = ""
         let data = self.profilesArray![row]
         if tableColumn == tableView.tableColumns[0] {
@@ -154,7 +151,7 @@ extension ViewControllerProfile : NSTableViewDelegate {
         }
         return nil
     }
-    
+
     func tableViewSelectionDidChange(_ notification: Notification) {
         let myTableViewFromNotification = notification.object as! NSTableView
         let indexes = myTableViewFromNotification.selectedRowIndexes
@@ -162,7 +159,5 @@ extension ViewControllerProfile : NSTableViewDelegate {
             self.useprofile = self.profilesArray![index]
         }
     }
-    
 
 }
-

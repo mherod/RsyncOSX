@@ -10,13 +10,13 @@
 import Foundation
 import Cocoa
 
-class ViewControllerScheduleDetailsAboutRuns : NSViewController {
-    
+class ViewControllerScheduleDetailsAboutRuns: NSViewController {
+
     @IBOutlet weak var scheduletable: NSTableView!
-    var tabledata:[NSMutableDictionary]?
+    var tabledata: [NSMutableDictionary]?
     // Search field
     @IBOutlet weak var search: NSSearchField!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
@@ -24,7 +24,7 @@ class ViewControllerScheduleDetailsAboutRuns : NSViewController {
         self.scheduletable.dataSource = self
         self.search.delegate = self
     }
-    
+
     override func viewDidAppear() {
         super.viewDidAppear()
         GlobalMainQueue.async(execute: { () -> Void in
@@ -34,10 +34,9 @@ class ViewControllerScheduleDetailsAboutRuns : NSViewController {
     }
 }
 
-
 extension ViewControllerScheduleDetailsAboutRuns : NSSearchFieldDelegate {
-    
-    func searchFieldDidStartSearching(_ sender: NSSearchField){
+
+    func searchFieldDidStartSearching(_ sender: NSSearchField) {
         if (sender.stringValue.isEmpty) {
             GlobalMainQueue.async(execute: { () -> Void in
                 self.tabledata = ScheduleDetailsAboutRuns().filter(search: nil)
@@ -50,18 +49,18 @@ extension ViewControllerScheduleDetailsAboutRuns : NSSearchFieldDelegate {
             })
         }
     }
-    
-    func searchFieldDidEndSearching(_ sender: NSSearchField){
+
+    func searchFieldDidEndSearching(_ sender: NSSearchField) {
         GlobalMainQueue.async(execute: { () -> Void in
             self.tabledata = ScheduleDetailsAboutRuns().filter(search: nil)
             self.scheduletable.reloadData()
         })
     }
-    
+
 }
 
 extension ViewControllerScheduleDetailsAboutRuns : NSTableViewDataSource {
-    
+
     func numberOfRows(in tableView: NSTableView) -> Int {
         if (self.tabledata == nil ) {
             return 0
@@ -69,16 +68,16 @@ extension ViewControllerScheduleDetailsAboutRuns : NSTableViewDataSource {
             return (self.tabledata!.count)
         }
     }
-    
+
 }
 
 extension ViewControllerScheduleDetailsAboutRuns : NSTableViewDelegate {
-    
+
     @objc(tableView:objectValueForTableColumn:row:) func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        let object:NSMutableDictionary = self.tabledata![row]
+        let object: NSMutableDictionary = self.tabledata![row]
         return object[tableColumn!.identifier] as? String
     }
-    
+
     // when row is selected
     // setting which table row is selected
     func tableViewSelectionDidChange(_ notification: Notification) {
@@ -94,5 +93,3 @@ extension ViewControllerScheduleDetailsAboutRuns : NSTableViewDelegate {
     }
 
 }
-
-

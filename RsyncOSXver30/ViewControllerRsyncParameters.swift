@@ -22,19 +22,19 @@ protocol SendSelecetedIndex : class {
 }
 
 class ViewControllerRsyncParameters: NSViewController {
-    
+
     // Object for calculating rsync parameters
-    var parameters : rsyncParameters?
+    var parameters: rsyncParameters?
     // Delegate returning params updated or not
-    weak var userparamsupdated_delegate : RsyncUserParams?
+    weak var userparamsupdated_delegate: RsyncUserParams?
     // Get index of selected row
-    weak var getindex_delegate : SendSelecetedIndex?
+    weak var getindex_delegate: SendSelecetedIndex?
     // Dismisser
-    weak var dismiss_delegate:DismissViewController?
+    weak var dismiss_delegate: DismissViewController?
     // Reference to rsync parameters
-    var argumentArray:[String]?
-    var argumentDictionary:[NSDictionary]?
-    
+    var argumentArray: [String]?
+    var argumentDictionary: [NSDictionary]?
+
     @IBOutlet weak var viewParameter1: NSTextField!
     @IBOutlet weak var viewParameter2: NSTextField!
     @IBOutlet weak var viewParameter3: NSTextField!
@@ -50,7 +50,7 @@ class ViewControllerRsyncParameters: NSViewController {
     @IBOutlet weak var viewParameter14: NSTextField!
     @IBOutlet weak var rsyncdaemon: NSButton!
     @IBOutlet weak var sshport: NSTextField!
-    
+
     // Comboboxes
     @IBOutlet weak var parameter8: NSComboBox!
     @IBOutlet weak var parameter9: NSComboBox!
@@ -59,12 +59,11 @@ class ViewControllerRsyncParameters: NSViewController {
     @IBOutlet weak var parameter12: NSComboBox!
     @IBOutlet weak var parameter13: NSComboBox!
     @IBOutlet weak var parameter14: NSComboBox!
-    
+
     @IBAction func close(_ sender: NSButton) {
          self.dismiss_delegate?.dismiss_view(viewcontroller: self)
     }
-    
-    
+
     // Function for enabling backup of changed files in a backup catalog
     // and suffix date + time changed files. Parameters are appended to
     // last three parameters.
@@ -86,12 +85,12 @@ class ViewControllerRsyncParameters: NSViewController {
             self.viewParameter14.stringValue = ""
         default : break
         }
-        
+
     }
-    
+
     // Backup button - only for testing on state
     @IBOutlet weak var backupbutton: NSButton!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Create RsyncParameters object and load initial parameters
@@ -107,20 +106,20 @@ class ViewControllerRsyncParameters: NSViewController {
             self.dismiss_delegate = pvc2
         }
     }
-    
+
     override func viewDidAppear() {
         super.viewDidAppear()
         self.backupbutton.state = 0
-        var configurations:[configuration] = SharingManagerConfiguration.sharedInstance.getConfigurations()
+        var configurations: [configuration] = SharingManagerConfiguration.sharedInstance.getConfigurations()
         let index = self.getindex_delegate?.getindex()
         self.viewParameter1.stringValue = configurations[index!].parameter1
         self.viewParameter2.stringValue = configurations[index!].parameter2
         self.viewParameter3.stringValue = configurations[index!].parameter3
         self.viewParameter4.stringValue = configurations[index!].parameter4
         self.viewParameter5.stringValue = configurations[index!].parameter5 + " " + configurations[index!].parameter6
-        
+
         // There are seven elements in array
-        let parameters:[NSMutableDictionary] = self.parameters!.setValuesViewDidLoad(index: index!)
+        let parameters: [NSMutableDictionary] = self.parameters!.setValuesViewDidLoad(index: index!)
         self.resetComboBox(self.parameter8, index: parameters[0].value(forKey: "indexComboBox") as! Int)
         self.viewParameter8.stringValue = parameters[0].value(forKey: "rsyncParameter") as! String
         self.resetComboBox(self.parameter9, index: parameters[1].value(forKey: "indexComboBox") as! Int)
@@ -144,10 +143,10 @@ class ViewControllerRsyncParameters: NSViewController {
             self.sshport.stringValue = String(configurations[index!].sshport!)
         }
     }
-    
+
     // Function for saving changed or new parameters for one configuration.
     @IBAction func update(_ sender: NSButton) {
-        var Configurations:[configuration] = storeAPI.sharedInstance.getConfigurations()
+        var Configurations: [configuration] = storeAPI.sharedInstance.getConfigurations()
         // Get the index of selected configuration
         let index = self.getindex_delegate?.getindex()
         Configurations[index!].parameter8 = self.parameters!.getRsyncParameter(indexCombobox: self.parameter8.indexOfSelectedItem, value: self.viewParameter8.stringValue)
@@ -169,14 +168,14 @@ class ViewControllerRsyncParameters: NSViewController {
         // Send dismiss delegate message
         self.dismiss_delegate?.dismiss_view(viewcontroller: self)
     }
-    
+
     // There are eight comboboxes
     // All eight are initalized during ViewDidLoad and
     // the correct index is set.
-    private func resetComboBox (_ combobox:NSComboBox, index:Int) {
+    private func resetComboBox (_ combobox: NSComboBox, index: Int) {
         combobox.removeAllItems()
         combobox.addItems(withObjectValues: self.argumentArray as [String]!)
         combobox.selectItem(at: index)
     }
-    
+
 }

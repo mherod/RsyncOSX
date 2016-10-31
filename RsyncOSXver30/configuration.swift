@@ -9,7 +9,7 @@
 import Foundation
 
 struct configuration {
-    var hiddenID : Int
+    var hiddenID: Int
     var task: String
     var localCatalog: String
     var offsiteCatalog: String
@@ -36,7 +36,7 @@ struct configuration {
     var parameter14: String?
     var rsyncdaemon: Int?
     var sshport: Int?
-    
+
     init(dictionary: NSDictionary) {
         self.hiddenID = dictionary.object(forKey: "hiddenID") as! Int
         self.task = dictionary.object(forKey: "task") as! String
@@ -54,38 +54,37 @@ struct configuration {
         self.parameter6 = dictionary.object(forKey: "parameter6") as! String
         self.offsiteServer = dictionary.object(forKey: "offsiteServer") as! String
         self.backupID = dictionary.object(forKey: "backupID") as! String
-        if (dictionary.object(forKey: "dateRun") != nil){
+        if (dictionary.object(forKey: "dateRun") != nil) {
             self.dateRun = dictionary.object(forKey: "dateRun") as? String
         } else {
             self.dateRun = " "
         }
-        if (dictionary.object(forKey: "parameter8") != nil){
+        if (dictionary.object(forKey: "parameter8") != nil) {
             self.parameter8 = dictionary.object(forKey: "parameter8") as? String
         }
-        if (dictionary.object(forKey: "parameter9") != nil){
+        if (dictionary.object(forKey: "parameter9") != nil) {
             self.parameter9 = dictionary.object(forKey: "parameter9") as? String
         }
-        if (dictionary.object(forKey: "parameter10") != nil){
+        if (dictionary.object(forKey: "parameter10") != nil) {
             self.parameter10 = dictionary.object(forKey: "parameter10") as? String
         }
-        if (dictionary.object(forKey: "parameter11") != nil){
+        if (dictionary.object(forKey: "parameter11") != nil) {
             self.parameter11 = dictionary.object(forKey: "parameter11") as? String
         }
-        if (dictionary.object(forKey: "parameter12") != nil){
+        if (dictionary.object(forKey: "parameter12") != nil) {
             self.parameter12 = dictionary.object(forKey: "parameter12") as? String
         }
-        if (dictionary.object(forKey: "parameter13") != nil){
+        if (dictionary.object(forKey: "parameter13") != nil) {
             self.parameter13 = dictionary.object(forKey: "parameter13") as? String
         }
-        if (dictionary.object(forKey: "parameter14") != nil){
+        if (dictionary.object(forKey: "parameter14") != nil) {
             self.parameter14 = dictionary.object(forKey: "parameter14") as? String
         }
-        if (dictionary.object(forKey: "rsyncdaemon") != nil){
+        if (dictionary.object(forKey: "rsyncdaemon") != nil) {
             self.rsyncdaemon = dictionary.object(forKey: "rsyncdaemon") as? Int
         }
-        if (dictionary.object(forKey: "sshport") != nil){
+        if (dictionary.object(forKey: "sshport") != nil) {
             self.sshport = dictionary.object(forKey: "sshport") as? Int
         }
     }
 }
-

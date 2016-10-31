@@ -19,13 +19,13 @@ protocol StartTimer : class {
     func startTimerNextJob()
 }
 
-class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableViewtabSchedule, DismissViewController, StartTimer, AddProfiles {
-    
+class ViewControllertabSchedule: NSViewController, GetHiddenID, RefreshtableViewtabSchedule, DismissViewController, StartTimer, AddProfiles {
+
     // Protocol GetHiddenID
     func gethiddenID() -> Int {
         return self.hiddenID!
     }
-    
+
     // Protocol RefreshtableViewtabSchedule
     func refreshInSchedule() {
         if (SharingManagerConfiguration.sharedInstance.ConfigurationsDataSourcecountBackupOnlyCount() > 0 ) {
@@ -40,7 +40,7 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
         self.firstScheduledTask.stringValue = (self.schedules?.whenIsNextTwoTasksString()[0])!
         self.secondScheduledTask.stringValue = (self.schedules?.whenIsNextTwoTasksString()[1])!
     }
-    
+
     // Protocol AddProfiles
     // Just reset the schedules
     func newProfile() {
@@ -48,45 +48,45 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
         self.firstRemoteServer.stringValue = ""
         self.firstLocalCatalog.stringValue = ""
         self.secondRemoteServer.stringValue = ""
-        self.secondLocalCatalog.stringValue = ""        
+        self.secondLocalCatalog.stringValue = ""
     }
-    
+
     // Main tableview
     @IBOutlet weak var mainTableView: NSTableView!
     @IBOutlet weak var once: NSButton!
     @IBOutlet weak var daily: NSButton!
     @IBOutlet weak var weekly: NSButton!
     @IBOutlet weak var details: NSButton!
-    
+
     // Index selected
-    private var index:Int?
+    private var index: Int?
     // hiddenID
-    private var hiddenID:Int?
+    private var hiddenID: Int?
     // Added schedules
-    private var newSchedules:Bool?
+    private var newSchedules: Bool?
     // Timer to count down when next scheduled backup is due.
     // The timer just updates stringvalue in ViewController.
     // Another function is responsible to kick off the first
     // scheduled operation.
-    private var nextTask : Timer?
+    private var nextTask: Timer?
     // Scedules object
-    fileprivate var schedules : ScheduleSortedAndExpand?
-    
+    fileprivate var schedules: ScheduleSortedAndExpand?
+
     // Delegates
     // Delegate to inform new schedules added or schedules deleted
-    weak var newSchedules_delegate:NewSchedules?
+    weak var newSchedules_delegate: NewSchedules?
     // Delegate function for starting next scheduled operatin if any
     // Delegate function is triggered when NSTaskDidTerminationNotification
     // is discovered (e.g previous job is done)
-    weak var start_next_job_delegate:StartNextScheduledTask?
-    
+    weak var start_next_job_delegate: StartNextScheduledTask?
+
     // Information Schedule details
     // self.presentViewControllerAsSheet(self.ViewControllerScheduleDetails)
     lazy var ViewControllerScheduleDetails: NSViewController = {
         return self.storyboard!.instantiateController(withIdentifier: "StoryboardScheduleID")
             as! NSViewController
     }()
-    
+
     // Userconfiguration
     // self.presentViewControllerAsSheet(self.ViewControllerUserconfiguration)
     lazy var ViewControllerUserconfiguration: NSViewController = {
@@ -94,32 +94,29 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
             as! NSViewController
     }()
 
-    
     // Telling the view to dismiss any presented Viewcontroller
-    func dismiss_view(viewcontroller:NSViewController) {
+    func dismiss_view(viewcontroller: NSViewController) {
         self.dismissViewController(viewcontroller)
     }
 
-    
     @IBOutlet weak var firstScheduledTask: NSTextField!
     @IBOutlet weak var secondScheduledTask: NSTextField!
     @IBOutlet weak var firstRemoteServer: NSTextField!
     @IBOutlet weak var secondRemoteServer: NSTextField!
     @IBOutlet weak var firstLocalCatalog: NSTextField!
     @IBOutlet weak var secondLocalCatalog: NSTextField!
-    
-    
+
     @IBAction func chooseSchedule(_ sender: NSButton) {
-        
+
         // Date and time for start
-        let startdate:Date = self.stoptime.dateValue
+        let startdate: Date = self.stoptime.dateValue
         // Seconds from now to starttime
-        let seconds:TimeInterval = self.stoptime.dateValue.timeIntervalSinceNow
+        let seconds: TimeInterval = self.stoptime.dateValue.timeIntervalSinceNow
         // Date and time for stop
-        let stopdate:Date = self.stopdate.dateValue.addingTimeInterval(seconds)
-        var schedule:String?
-        var details:Bool = false
-        
+        let stopdate: Date = self.stopdate.dateValue.addingTimeInterval(seconds)
+        var schedule: String?
+        var details: Bool = false
+
         if (self.index != nil) {
             if (self.once.state == 1) {
                 schedule = "once"
@@ -134,7 +131,7 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
                      self.presentViewControllerAsSheet(self.ViewControllerScheduleDetails)
                 })
             }
-            
+
             if (details == false) {
                 let answer = Alerts.dialogOKCancel("Add Schedule?", text: "Cancel or OK")
                 if (answer) {
@@ -152,22 +149,22 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
             }
         }
     }
-    
+
     // Userconfiguration button
     @IBAction func Userconfiguration(_ sender: NSButton) {
         GlobalMainQueue.async(execute: { () -> Void in
             self.presentViewControllerAsSheet(self.ViewControllerUserconfiguration)
         })
     }
-    
+
     // First execution starts TODAY at time
-    // Next execution starts after SCHEDULE 
-    
+    // Next execution starts after SCHEDULE
+
     // Date for stopping services
     @IBOutlet weak var stopdate: NSDatePicker!
     // Time for stopping services
     @IBOutlet weak var stoptime: NSDatePicker!
-    
+
     // Initial functions viewDidLoad and viewDidAppear
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -181,8 +178,7 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
         // Setting reference to self.
         SharingManagerConfiguration.sharedInstance.ScheduleObjectMain = self
     }
-    
-    
+
     override func viewDidAppear() {
         super.viewDidAppear()
         // Set initial values of dates to now
@@ -204,7 +200,7 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
         // Reference to self
         SharingManagerSchedule.sharedInstance.ViewObjectSchedule = self
     }
-    
+
     override func viewDidDisappear() {
         super.viewDidDisappear()
         if (self.newSchedules!) {
@@ -216,12 +212,12 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
             }
         }
     }
-    
+
     // Start timer
     func startTimer() {
         // Find out if count down and update display
         if (self.schedules != nil) {
-            let timer:Double = self.schedules!.startTimerseconds()
+            let timer: Double = self.schedules!.startTimerseconds()
             // timer == 0 do not start NSTimer, timer > 0 update frequens of NSTimer
             if (timer > 0) {
                 self.nextTask?.invalidate()
@@ -231,7 +227,7 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
             }
         }
     }
-    
+
     // Update display next scheduled jobs in time
     func nextScheduledtask() {
         if (self.schedules != nil) {
@@ -250,11 +246,11 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
                     self.secondRemoteServer.stringValue = ""
                     self.secondLocalCatalog.stringValue = ""
                 }
-                
+
             }
         }
     }
-    
+
     // Protocol function StartTimer
     // Called from Process
     func startTimerNextJob() {
@@ -263,7 +259,7 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
         self.firstLocalCatalog.stringValue = ""
         self.startTimer()
     }
-    
+
     // when row is selected
     // setting which table row is selected
     func tableViewSelectionDidChange(_ notification: Notification) {
@@ -279,25 +275,25 @@ class ViewControllertabSchedule : NSViewController, GetHiddenID, RefreshtableVie
             self.hiddenID = nil
         }
     }
-    
+
 }
 
 extension ViewControllertabSchedule : NSTableViewDataSource {
-    
+
     func numberOfRows(in tableView: NSTableView) -> Int {
         return SharingManagerConfiguration.sharedInstance.ConfigurationsDataSourcecountBackupOnlyCount()
     }
 }
 
 extension ViewControllertabSchedule : NSTableViewDelegate {
-    
+
     @objc(tableView:objectValueForTableColumn:row:) func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        let object : NSDictionary = SharingManagerConfiguration.sharedInstance.getConfigurationsDataSourcecountBackupOnly()![row]
-        var text:String?
-        var schedule :Bool = false
-        var number:Int?
-        
-        let hiddenID:Int = (object.value(forKey: "hiddenID") as? Int)!
+        let object: NSDictionary = SharingManagerConfiguration.sharedInstance.getConfigurationsDataSourcecountBackupOnly()![row]
+        var text: String?
+        var schedule: Bool = false
+        var number: Int?
+
+        let hiddenID: Int = (object.value(forKey: "hiddenID") as? Int)!
         if SharingManagerSchedule.sharedInstance.hiddenIDinSchedule(hiddenID) {
             text = object[tableColumn!.identifier] as? String
             if (text == "backup" || text == "restore") {
@@ -320,7 +316,7 @@ extension ViewControllertabSchedule : NSTableViewDelegate {
             }
         }
     }
-    
+
     // Toggling batch
     @objc(tableView:setObjectValue:forTableColumn:row:) func tableView(_ tableView: NSTableView, setObjectValue object: Any?, for tableColumn: NSTableColumn?, row: Int) {
         if (SharingManagerConfiguration.sharedInstance.getConfigurations()[row].task == "backup") {
@@ -328,5 +324,5 @@ extension ViewControllertabSchedule : NSTableViewDelegate {
             SharingManagerConfiguration.sharedInstance.setBatchYesNo(row)
         }
     }
-    
+
 }

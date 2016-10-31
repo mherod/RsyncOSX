@@ -14,21 +14,19 @@ protocol Information : class {
     func getInformation () -> [String]
 }
 
+class ViewControllerInformation: NSViewController {
 
-
-class ViewControllerInformation : NSViewController {
-    
     // TableView
     @IBOutlet weak var detailsTable: NSTableView!
-    
+
     // output from Rsync
-    var output:[String]?
-    
+    var output: [String]?
+
     // Delegate for getting the Information to present in table
-    weak var information_delegate:Information?
+    weak var information_delegate: Information?
     // Dismisser
-    weak var dismiss_delegate:DismissViewController?
-    
+    weak var dismiss_delegate: DismissViewController?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
@@ -41,21 +39,21 @@ class ViewControllerInformation : NSViewController {
             self.dismiss_delegate = pvc
         }
     }
-    
+
     override func viewDidAppear() {
         super.viewDidAppear()
         self.output = self.information_delegate?.getInformation()
         detailsTable.reloadData()
     }
-    
+
     @IBAction func close(_ sender: NSButton) {
         self.dismiss_delegate?.dismiss_view(viewcontroller: self)
     }
-    
+
 }
 
 extension ViewControllerInformation : NSTableViewDataSource {
-   
+
     func numberOfRows(in aTableView: NSTableView) -> Int {
         if (self.output != nil) {
             return (self.output?.count)!
@@ -67,16 +65,16 @@ extension ViewControllerInformation : NSTableViewDataSource {
 }
 
 extension ViewControllerInformation : NSTableViewDelegate {
-    
+
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         var text: String = ""
         var cellIdentifier: String = ""
-        
+
         if tableColumn == tableView.tableColumns[0] {
             text = self.output![row]
             cellIdentifier = "outputID"
         }
-        
+
         if let cell = tableView.make(withIdentifier: cellIdentifier, owner: nil) as? NSTableCellView {
             cell.textField?.stringValue = text
             return cell
@@ -84,8 +82,4 @@ extension ViewControllerInformation : NSTableViewDelegate {
         return nil
     }
 }
-
-
-    
-    
 

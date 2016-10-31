@@ -13,13 +13,13 @@ protocol newVersionDiscovered : class {
 }
 
 final class newVersion {
-    
-    private var runningVersion : String?
-    private var urlPlist : String?
-    private var urlNewVersion : String?
-    
+
+    private var runningVersion: String?
+    private var urlPlist: String?
+    private var urlNewVersion: String?
+
     weak var newversion_delegate: newVersionDiscovered?
-    
+
     private func setURLnewVersion () {
         GlobalBackgroundQueue.async(execute: { () -> Void in
             if let url = URL(string: self.urlPlist!) {
@@ -36,11 +36,10 @@ final class newVersion {
                         }
                     }
                 }
-            } 
+            }
         })
     }
 
-    
     init () {
         let infoPlist = Bundle.main.infoDictionary
         let version = infoPlist?["CFBundleShortVersionString"]
@@ -51,6 +50,5 @@ final class newVersion {
         self.urlPlist = "https://dl.dropboxusercontent.com/u/52503631/versionRsyncOSX.plist?raw=1"
         self.setURLnewVersion()
     }
-    
-}
 
+}

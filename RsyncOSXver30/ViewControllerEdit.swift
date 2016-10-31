@@ -13,9 +13,8 @@ protocol ReadConfigurationsAgain : class {
     func readConfigurations()
 }
 
+class ViewControllerEdit: NSViewController {
 
-class ViewControllerEdit : NSViewController {
-    
     @IBOutlet weak var localCatalog: NSTextField!
     @IBOutlet weak var offsiteCatalog: NSTextField!
     @IBOutlet weak var offsiteUsername: NSTextField!
@@ -23,29 +22,29 @@ class ViewControllerEdit : NSViewController {
     @IBOutlet weak var backupID: NSTextField!
     @IBOutlet weak var sshport: NSTextField!
     @IBOutlet weak var rsyncdaemon: NSButton!
-    
+
     // Index selectted row
-    var index:Int?
-    
+    var index: Int?
+
     // Get index of selected row
-    weak var getindex_delegate : SendSelecetedIndex?
+    weak var getindex_delegate: SendSelecetedIndex?
     // after update reread configuration
-    weak var readconfigurations_delegate:ReadConfigurationsAgain?
+    weak var readconfigurations_delegate: ReadConfigurationsAgain?
     // Dismisser
-    weak var dismiss_delegate:DismissViewController?
-    
+    weak var dismiss_delegate: DismissViewController?
+
     @IBAction func Close(_ sender: NSButton) {
         self.dismiss_delegate?.dismiss_view(viewcontroller: self)
     }
-    
+
     @IBAction func Update(_ sender: NSButton) {
-        var config:[configuration] = SharingManagerConfiguration.sharedInstance.getConfigurations()
-        
-        if (!self.localCatalog.stringValue.hasSuffix("/")){
+        var config: [configuration] = SharingManagerConfiguration.sharedInstance.getConfigurations()
+
+        if (!self.localCatalog.stringValue.hasSuffix("/")) {
             self.localCatalog.stringValue = self.localCatalog.stringValue + "/"
         }
         config[self.index!].localCatalog = self.localCatalog.stringValue
-        if (!self.offsiteCatalog.stringValue.hasSuffix("/")){
+        if (!self.offsiteCatalog.stringValue.hasSuffix("/")) {
             self.offsiteCatalog.stringValue = self.offsiteCatalog.stringValue + "/"
         }
         config[self.index!].offsiteCatalog = self.offsiteCatalog.stringValue
@@ -61,7 +60,7 @@ class ViewControllerEdit : NSViewController {
         self.readconfigurations_delegate?.readConfigurations()
         self.dismiss_delegate?.dismiss_view(viewcontroller: self)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         if let pvc = SharingManagerConfiguration.sharedInstance.ViewObjectMain as? ViewControllertabMain {
@@ -72,7 +71,7 @@ class ViewControllerEdit : NSViewController {
             self.dismiss_delegate = pvc2
         }
     }
-    
+
     override func viewDidAppear() {
         super.viewDidAppear()
         if let pvc = self.presenting as? ViewControllertabMain {
@@ -91,11 +90,11 @@ class ViewControllerEdit : NSViewController {
             self.rsyncdaemon.state = rsyncdaemon
         }
     }
-    
+
 }
 
 extension ViewControllerEdit : NSDraggingDestination {
-    
+
     private func draggingEntered(sender: NSDraggingInfo) -> NSDragOperation {
         let sourceDragMask = sender.draggingSourceOperationMask()
         let pboard = sender.draggingPasteboard()
@@ -106,15 +105,15 @@ extension ViewControllerEdit : NSDraggingDestination {
         }
         return NSDragOperation.copy
     }
-    
+
     private func draggingUpdated(sender: NSDraggingInfo) -> NSDragOperation {
         return NSDragOperation.generic
     }
-    
+
     func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
         return true
     }
-    
+
     func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
         return true
     }

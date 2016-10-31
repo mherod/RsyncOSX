@@ -9,23 +9,23 @@
 import Foundation
 
 class rsyncProcessArguments {
-    
+
     // If true one of the userselecet params are --stats
     // If not add --stats in dryrun arguments.
     // Must check all parameter8 - paramater14
     // both backup and restore part
-    var stats:Bool?
-        
-    func argumentsRsync (_ config : configuration, dryRun : Bool, forDisplay : Bool) -> [String] {
-        
+    var stats: Bool?
+
+    func argumentsRsync (_ config: configuration, dryRun: Bool, forDisplay: Bool) -> [String] {
+
         var arguments = [String]()
-        
+
         let task: String = config.task
         let localCatalog: String = config.localCatalog
         let offsiteCatalog: String = config.offsiteCatalog
         let offsiteUsername: String = config.offsiteUsername
         let dryrun: String = config.dryrun
-        
+
         let parameter1: String = config.parameter1
         let parameter2: String = config.parameter2
         let parameter3: String = config.parameter3
@@ -47,7 +47,7 @@ class rsyncProcessArguments {
                 offsiteArguments = offsiteUsername + "@" + offsiteServer + ":" + offsiteCatalog
             }
         }
-        
+
         switch task {
         case "backup":
             self.stats = false
@@ -80,11 +80,11 @@ class rsyncProcessArguments {
                 }
                 if (forDisplay) {arguments.append(" ")}
             }
-            
+
             // insert any other userselected parameters at this point
             // parameter8 ... parameter14
             // Brute force, check every parameter
-            
+
             if (config.parameter8 != nil) {
                 if ((config.parameter8?.characters.count)! > 1) {
                     if config.parameter8! == "--stats" {self.stats = true}
@@ -183,11 +183,11 @@ class rsyncProcessArguments {
                 }
                 if (forDisplay) {arguments.append(" ")}
             }
-            
+
             // insert any other userselected parameters at this point
             // parameter8 ... parameter14
             // Brute force...
-            
+
             if (config.parameter8 != nil) {
                 if ((config.parameter8?.characters.count)! > 1) {
                     if config.parameter8! == "--stats" {self.stats = true}

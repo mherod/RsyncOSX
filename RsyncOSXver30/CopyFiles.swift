@@ -9,51 +9,50 @@
 import Foundation
 
 final class CopyFiles {
-    
+
     // Index from View
-    private var index:Int?
+    private var index: Int?
     // stack of Work
-    private var work:[enumscpTasks]?
+    private var work: [enumscpTasks]?
     // Setting the configuration element according to index
-    private var config:configuration?
+    private var config: configuration?
     // when files.txt is copied from remote server get the records
-    private var files:[String]?
+    private var files: [String]?
     // Arguments and command for Process object
-    private var arguments:[String]?
-    private var command:String?
+    private var arguments: [String]?
+    private var command: String?
     // The arguments object
-    var argumentsObject:scpProcessArguments?
+    var argumentsObject: scpProcessArguments?
     // Message to calling class do a refresh
-    weak var refreshtable_delegate:RefreshtableViewtabMain?
+    weak var refreshtable_delegate: RefreshtableViewtabMain?
     // Command real run - for the copy process (by rsync)
-    private var argumentsRsync:[String]?
+    private var argumentsRsync: [String]?
     // Command dry-run - for the copy process (by rsync)
-    private var argymentsRsyncDrynRun:[String]?
+    private var argymentsRsyncDrynRun: [String]?
     // String to display in view
-    private var commandDisplay:String?
+    private var commandDisplay: String?
     // Start and stop progress view
     weak var progress_delegate: StartStopProgressIndicatorViewBatch?
     // The Process object
-    var task:rsyncProcess?
+    var task: rsyncProcess?
     // rsync outPut object
-    var output:outputProcess?
-    
-    
+    var output: outputProcess?
+
     // Get output from Rsync
     func getOutput() -> [String] {
         return self.output!.getOutput()
     }
-    
+
     // Abort operation, terminate process
     func Abort() {
         if (self.task != nil) {
             self.task!.abortProcess()
         }
-        
+
     }
-    
+
     // Execute Process (either dryrun or realrun)
-    func execute(remotefile:String, localCatalog:String, dryrun:Bool) {
+    func execute(remotefile: String, localCatalog: String, dryrun: Bool) {
         if(dryrun) {
             self.argumentsObject = scpProcessArguments(task: .copy, config: self.config!, remoteFile: remotefile, localCatalog: localCatalog, drynrun: true)
             self.arguments = self.argumentsObject!.getArgs()
@@ -67,26 +66,26 @@ final class CopyFiles {
         self.output = outputProcess()
         self.task!.executeProcess(self.arguments!, output: self.output!)
     }
-    
+
     // Get arguments for rsync to show
-    func getCommandDisplayinView(remotefile:String, localCatalog:String) -> String? {
+    func getCommandDisplayinView(remotefile: String, localCatalog: String) -> String? {
         self.commandDisplay = scpProcessArguments(task: .copy, config: self.config!, remoteFile: remotefile, localCatalog: localCatalog, drynrun: true).getcommandDisplay()
         return self.commandDisplay
     }
-    
-    // As soon as we get the termination message kick of 
+
+    // As soon as we get the termination message kick of
     // the next work. Work is first ssh and then scp
     func nextWork() {
         self.doWork()
     }
-    
+
     // The work stack.
     // This is the initial work when selecting a row to restore from.
     // The stack is .create and .scpFind
     private func doWork() {
         if (self.work != nil) {
             if (self.work!.count > 0) {
-                let work:enumscpTasks = (self.work?.removeFirst())!
+                let work: enumscpTasks = (self.work?.removeFirst())!
                 self.argumentsObject = scpProcessArguments(task: work, config: self.config!, remoteFile: nil, localCatalog: nil, drynrun: nil)
                 self.arguments = self.argumentsObject!.getArgs()
                 self.command = self.argumentsObject!.getCommand()
@@ -94,7 +93,7 @@ final class CopyFiles {
                 self.task = rsyncProcess(notification: false, tabMain: false, command : self.command)
                 self.output = outputProcess()
                 self.task!.executeProcess(self.arguments!, output: self.output!)
-                
+
             } else {
                 // Files.txt are ready to read
                 self.files = self.argumentsObject?.getSearchfile()
@@ -107,9 +106,9 @@ final class CopyFiles {
             }
         }
     }
-    
+
     // Filter function
-    func filter(search:String?) -> [String] {
+    func filter(search: String?) -> [String] {
         if (search != nil) {
             if (search!.isEmpty == false) {
                 // Filter data
@@ -124,9 +123,8 @@ final class CopyFiles {
             return [""]
         }
     }
-    
-    
-    init (index:Int) {
+
+    init (index: Int) {
         // Setting index and configuration object
         self.index = index
         self.config = SharingManagerConfiguration.sharedInstance.getConfigurations()[self.index!]
@@ -139,6 +137,5 @@ final class CopyFiles {
         // Do first part of job
         self.doWork()
     }
-    
-  }
 
+  }

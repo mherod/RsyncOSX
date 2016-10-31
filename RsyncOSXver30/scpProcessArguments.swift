@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 enum enumscpTasks {
     case create
     case scpHistory
@@ -17,17 +16,17 @@ enum enumscpTasks {
 }
 
 final class scpProcessArguments {
-    
+
     // File to read
-    private var file:String?
+    private var file: String?
     // Array for storing arguments
     private var args = [String]()
     // String for display
-    private var argDisplay:String?
+    private var argDisplay: String?
     // command string
-    private var command:String?
+    private var command: String?
     // config, is set in init
-    private var config:configuration?
+    private var config: configuration?
     // Output of NSTask
     private var output = [String]()
     // Getting arguments
@@ -38,15 +37,15 @@ final class scpProcessArguments {
     func getCommand() -> String? {
         return self.command
     }
-    
+
     // Getting the command to displya in view
     func getcommandDisplay() -> String? {
         return self.argDisplay
     }
-    
+
     // Reading content of txt file into an Array of String
     func getSearchfile () -> [String]? {
-        var stringArray:[String]?
+        var stringArray: [String]?
         if let file = self.file {
             let fileContent = try? String(contentsOfFile: file, encoding: String.Encoding.utf8)
             if fileContent != nil {
@@ -55,10 +54,10 @@ final class scpProcessArguments {
         }
         return stringArray
     }
-    
+
     // Set parameters for SCP for .create og .plist files
-    private func setSCParguments(_ postfix:String) {
-        var postfix2:String?
+    private func setSCParguments(_ postfix: String) {
+        var postfix2: String?
         // For SCP copy history.plist from server to local store
         if (self.config!.sshport != nil) {
             self.args.append("-P")
@@ -81,8 +80,8 @@ final class scpProcessArguments {
         self.command = "/usr/bin/scp"
         self.file = self.config!.localCatalog + "." + postfix2!
     }
-    
-    init (task : enumscpTasks, config : configuration, remoteFile : String?, localCatalog : String?, drynrun:Bool?) {
+
+    init (task: enumscpTasks, config: configuration, remoteFile: String?, localCatalog: String?, drynrun: Bool?) {
         // Initialize the argument array
         if self.args.count > 0 {
             self.args.removeAll()
@@ -103,7 +102,7 @@ final class scpProcessArguments {
                 self.args.append("-c")
                 self.command = "/bin/bash"
             }
-            let str:String = "cd " + config.offsiteCatalog + "; find . -print | cat > .files.txt "
+            let str: String = "cd " + config.offsiteCatalog + "; find . -print | cat > .files.txt "
             self.args.append(str)
         case .scpHistory:
             // For SCP copy history.plist from server to local store
@@ -113,11 +112,11 @@ final class scpProcessArguments {
             self.setSCParguments("files.txt")
         case .copy:
             // Drop the two first characeters ("./") as result from the find . -name
-            let remote_with_whitespace:String = String(remoteFile!.characters.dropFirst(2))
+            let remote_with_whitespace: String = String(remoteFile!.characters.dropFirst(2))
             // Replace remote for white spaces
-            let whitespace:String = "\\ "
+            let whitespace: String = "\\ "
             let remote = remote_with_whitespace.replacingOccurrences(of: " ", with: whitespace)
-            let local:String = localCatalog!
+            let local: String = localCatalog!
             if (config.sshport != nil) {
                 self.args.append("-e")
                 self.args.append("ssh -p " + String(config.sshport!))
@@ -144,7 +143,7 @@ final class scpProcessArguments {
                 self.args.append(offsiteArguments)
             }
             self.args.append(local)
-            // Set command to Process /usr/bin/rysnc or /usr/local/bin/rsync 
+            // Set command to Process /usr/bin/rysnc or /usr/local/bin/rsync
             // or other set by userconfiguration
             self.command = SharingManagerConfiguration.sharedInstance.setRsyncCommand()
             // Prepare the display version of arguments

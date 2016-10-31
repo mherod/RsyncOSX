@@ -39,10 +39,10 @@ protocol Connections : class {
 }
 
 final class Utils {
-    
-    private var indexBoolremoteserverOff:[Bool]?
-    weak var delegate_testconnections:Connections?
-    
+
+    private var indexBoolremoteserverOff: [Bool]?
+    weak var delegate_testconnections: Connections?
+
     // Creates a singelton of this class
     class var  sharedInstance: Utils {
         struct Singleton {
@@ -50,10 +50,10 @@ final class Utils {
         }
         return Singleton.instance
     }
-    
+
     // Display the correct command to execute
-    func setRsyncCommandDisplay(index:Int, dryRun:Bool) -> String {
-        var str:String?
+    func setRsyncCommandDisplay(index: Int, dryRun: Bool) -> String {
+        var str: String?
         let config = SharingManagerConfiguration.sharedInstance.getargumentAllConfigurations()[index] as? argumentsOneConfig
         if (dryRun) {
                 str = SharingManagerConfiguration.sharedInstance.setRsyncCommand() + " "
@@ -72,12 +72,12 @@ final class Utils {
             }
         return str!
     }
-    
+
     // Test for TCP connection
-    func testTCPconnection (_ addr:String, port:Int, timeout:Int) -> (Bool, String) {
-        var connectionOK:Bool = false
-        var str:String = ""
-        let client:TCPClient = TCPClient(addr: addr, port: port)
+    func testTCPconnection (_ addr: String, port: Int, timeout: Int) -> (Bool, String) {
+        var connectionOK: Bool = false
+        var str: String = ""
+        let client: TCPClient = TCPClient(addr: addr, port: port)
         let (success, errmsg) = client.connect(timeout: timeout)
         connectionOK = success
         if connectionOK {
@@ -87,7 +87,6 @@ final class Utils {
         }
         return (connectionOK, str)
     }
-
 
     func setDateformat() -> DateFormatter {
         let dateformatter = DateFormatter()
@@ -102,7 +101,7 @@ final class Utils {
     func gettestAllremoteserverConnections() -> [Bool]? {
         return self.indexBoolremoteserverOff
     }
-    
+
     // Testing all remote servers.
     // Adding connection true or false in array[bool]
     // Do the check in background que, reload table in global main queue
@@ -110,11 +109,11 @@ final class Utils {
         self.indexBoolremoteserverOff = [Bool]()
         GlobalDefaultQueue.async(execute: { () -> Void in
             // self.indexBoolremoteserverOff.removeAll()
-            var port:Int = 22
+            var port: Int = 22
             for i in 0 ..< SharingManagerConfiguration.sharedInstance.ConfigurationsDataSourcecount() {
                 let config = SharingManagerConfiguration.sharedInstance.getargumentAllConfigurations()[i] as? argumentsOneConfig
                 if ((config?.config.offsiteServer)! != "") {
-                    if let sshport:Int = config?.config.sshport {
+                    if let sshport: Int = config?.config.sshport {
                         port = sshport
                     }
                     let (success, _) = Utils.sharedInstance.testTCPconnection((config?.config.offsiteServer)!, port: port, timeout: 1)
@@ -139,6 +138,4 @@ final class Utils {
         })
     }
 
-    
  }
-

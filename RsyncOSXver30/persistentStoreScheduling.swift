@@ -11,27 +11,27 @@
 
 import Foundation
 
-final class persistentStoreScheduling : readwritefiles {
-    
+final class persistentStoreScheduling: readwritefiles {
+
     // Variables holds all scheduledata
     private var schedules: [NSDictionary]?
-    
+
     /// Function reads schedules from permanent store
     /// - returns : array of NSDictonarys, return might be nil if schedule is already in memory
     func readSchedulesFromPermanentStore() -> [NSDictionary]? {
         return self.schedules
     }
-        
+
     // Saving Schedules from MEMORY to persistent store
-    func savescheduleInMemoryToPersistentStore(){
-        
+    func savescheduleInMemoryToPersistentStore() {
+
         var array = Array<NSDictionary>()
         // Reading Schedules from memory
         let data = SharingManagerSchedule.sharedInstance.getSchedule()
-        
+
         for i in 0 ..< data.count {
             let schedule = data[i]
-            let dict:NSMutableDictionary = [
+            let dict: NSMutableDictionary = [
                 "hiddenID" : schedule.hiddenID,
                 "dateStart":schedule.dateStart,
                 "schedule":schedule.schedule,
@@ -51,16 +51,15 @@ final class persistentStoreScheduling : readwritefiles {
         self.writeToStore(array)
     }
 
-    
     // Saving not deleted schedule records to persistent store
     // Deleted Schedule by hiddenID
-    func savescheduleDeletedRecordsToFile (_ hiddenID : Int) {
+    func savescheduleDeletedRecordsToFile (_ hiddenID: Int) {
         var array = Array<NSDictionary>()
         let Schedule = SharingManagerSchedule.sharedInstance.getSchedule()
         for i in 0 ..< Schedule.count {
             let schedule = Schedule[i]
             if ((schedule.delete == nil) && (schedule.hiddenID != hiddenID)) {
-                let dict:NSMutableDictionary = [
+                let dict: NSMutableDictionary = [
                     "hiddenID" : schedule.hiddenID,
                     "dateStart":schedule.dateStart,
                     "schedule":schedule.schedule,
@@ -74,14 +73,14 @@ final class persistentStoreScheduling : readwritefiles {
         // Write array to persistent store
         self.writeToStore(array)
     }
-    
+
     // Writing schedules to persistent store
     // Schedule is Array<NSDictionary>
     private func writeToStore (_ array: Array<NSDictionary>) {
         // Getting the object just for the write method, no read from persistent store
         _ = self.writeDictionarytofile(array, task: .schedule)
     }
-    
+
     override init () {
         // Create the readwritefiles object
         super.init()

@@ -9,7 +9,7 @@
 import Foundation
 
 class storeAPI {
-    
+
     // Creates a singelton of this class
     class var  sharedInstance: storeAPI {
         struct Singleton {
@@ -17,19 +17,19 @@ class storeAPI {
         }
         return Singleton.instance
     }
-    
+
     // Delegate function for starting next scheduled operatin if any
     // Delegate function is triggered when NSTaskDidTerminationNotification
     // is discovered (e.g previous job is done)
-    weak var start_next_job_delegate:StartNextScheduledTask?
-    
+    weak var start_next_job_delegate: StartNextScheduledTask?
+
     // CONFIGURATIONS
-    
+
     // Reading and writing configurations.
     // StoreAPI : API to class persistentStore.
     // If data is dirty read new data from persisten store else
     // return Configuration already in memory
-    
+
     // Read configurations from persisten store
     func getConfigurations() -> [configuration] {
         let read = persistentStoreConfiguration()
@@ -46,19 +46,19 @@ class storeAPI {
             return SharingManagerConfiguration.sharedInstance.getConfigurations()
         }
     }
-    
+
     // Saving configuration from memory to persistent store
     func saveConfigFromMemory() {
         let save = persistentStoreConfiguration()
         save.saveconfigInMemoryToPersistentStore()
     }
-    
+
     // Saving added configuration from meory
     func saveNewConfigurations() {
         let save = persistentStoreConfiguration()
         let newConfigurations = SharingManagerConfiguration.sharedInstance.getnewConfigurations()
         if (newConfigurations != nil) {
-            for i in 0 ..< newConfigurations!.count  {
+            for i in 0 ..< newConfigurations!.count {
                     save.addConfigurationsToMemory(newConfigurations![i])
                 }
             save.saveconfigInMemoryToPersistentStore()
@@ -68,11 +68,9 @@ class storeAPI {
         // Read all Configurations again to get all arguments
         SharingManagerConfiguration.sharedInstance.getAllConfigurationsandArguments()
     }
-    
-    
+
     // SCHEDULE
- 
-    
+
     // Saving Schedules from memory to persistent store
     func saveScheduleFromMemory() {
         let store = persistentStoreScheduling()
@@ -87,7 +85,7 @@ class storeAPI {
             start_next_job_delegate?.startProcess()
         }
     }
-    
+
     // Read schedules and history
     // If no Schedule from persistent store return nil
     func getScheduleandhistory () -> [configurationSchedule]? {
@@ -110,7 +108,7 @@ class storeAPI {
             return nil
         }
     }
-    
+
     // Reading and writing scheduling data and results of executions.
     // StoreAPI : API to class persistentStorescheduling.
     // Readig schedules only (not sorted and expanden)
@@ -128,21 +126,18 @@ class storeAPI {
             return SharingManagerSchedule.sharedInstance.getSchedule()
         }
     }
-    
-    
+
     // USERCONFIG
-    
+
     // Saving user configuration
     func saveUserconfiguration() {
         let store = persistentStoreUserconfiguration()
         store.saveUserconfiguration()
     }
-    
+
     func getUserconfiguration () -> [NSDictionary]? {
         let store = persistentStoreUserconfiguration()
         return store.readUserconfigurationsFromPermanentStore()
     }
-    
+
 }
-
-

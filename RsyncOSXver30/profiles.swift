@@ -9,11 +9,11 @@
 import Foundation
 
 class profiles {
-    
+
     // Set the string to absolute string path
-    private var filePath:String?
+    private var filePath: String?
     // profiles root - returns the root of profiles
-    private var profileRoot : String? {
+    private var profileRoot: String? {
         get {
             let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
             let docuDir = paths.firstObject as! String
@@ -21,10 +21,10 @@ class profiles {
             return profilePath
         }
     }
-    
+
     // Function for returning directorys in path as array of URLs
     private func getDirectorysURLs () -> [URL] {
-        var array:[URL] = [URL]()
+        var array: [URL] = [URL]()
         if let filePath = self.profileRoot {
             if let fileURLs = self.getfileURLs(path: filePath) {
                 for i in 0 ..< fileURLs.count {
@@ -37,10 +37,10 @@ class profiles {
         }
         return array
     }
-    
+
     // Function for returning profiles as array of Strings
-    func getDirectorysStrings()-> [String] {
-        var array:[String] = [String]()
+    func getDirectorysStrings() -> [String] {
+        var array: [String] = [String]()
         if let filePath = self.profileRoot {
             if let fileURLs = self.getfileURLs(path: filePath) {
                 for i in 0 ..< fileURLs.count {
@@ -55,65 +55,60 @@ class profiles {
         }
         return array
     }
-    
+
     // Function for creating new profile directory
-    func createProfile(profileName:String) {
+    func createProfile(profileName: String) {
         let fileManager = FileManager.default
         if let path = self.profileRoot {
             let profileDirectory = path + "/" + profileName
             if (fileManager.fileExists(atPath: profileDirectory) == false) {
                 do {
-                    try fileManager.createDirectory(atPath: profileDirectory, withIntermediateDirectories: true, attributes: nil)}
-                catch _ as NSError { }
+                    try fileManager.createDirectory(atPath: profileDirectory, withIntermediateDirectories: true, attributes: nil)} catch _ as NSError { }
             }
         }
     }
-    
+
     // Function for deleting profile
     // if let path = URL.init(string: profileDirectory) {
-    func deleteProfile(profileName:String) {
+    func deleteProfile(profileName: String) {
         let fileManager = FileManager.default
         if let path = self.profileRoot {
             let profileDirectory = path + "/" + profileName
             if (fileManager.fileExists(atPath: profileDirectory) == true) {
                 let answer = Alerts.dialogOKCancel("Delete profile: " + profileName + "?", text: "Cancel or OK")
-                if (answer){
+                if (answer) {
                     do {
-                        try fileManager.removeItem(atPath: profileDirectory)}
-                    catch _ as NSError {}
+                        try fileManager.removeItem(atPath: profileDirectory)} catch _ as NSError {}
                 }
             }
         }
     }
-    
-    
+
     // Func that creates directory if not created
     func createDirectory() {
         let fileManager = FileManager.default
         if let path = self.filePath {
             if (fileManager.fileExists(atPath: path) == false) {
                 do {
-                    try fileManager.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)}
-                catch _ as NSError { }
+                    try fileManager.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)} catch _ as NSError { }
             }
         }
     }
 
-    
     // Function for setting fileURLs for a given path
-    private func getfileURLs (path:String) -> [URL]? {
+    private func getfileURLs (path: String) -> [URL]? {
         let fileManager = FileManager.default
         if let filepath = URL.init(string: path) {
             do {
-                let files = try fileManager.contentsOfDirectory(at: filepath, includingPropertiesForKeys: nil , options: .skipsHiddenFiles)
+                let files = try fileManager.contentsOfDirectory(at: filepath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
                 return files
             } catch _ as NSError { }
         }
         return nil
     }
-    
-    init (path:String?) {
+
+    init (path: String?) {
         self.filePath = path
     }
-    
+
 }

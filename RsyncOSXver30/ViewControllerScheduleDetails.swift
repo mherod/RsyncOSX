@@ -13,33 +13,33 @@ protocol GetHiddenID : class {
     func gethiddenID() -> Int
 }
 
-class ViewControllerScheduleDetails : NSViewController {
-    
+class ViewControllerScheduleDetails: NSViewController {
+
     @IBOutlet weak var localCatalog: NSTextField!
     @IBOutlet weak var remoteCatalog: NSTextField!
     @IBOutlet weak var offsiteServer: NSTextField!
-    
+
     // Delegate functions
     // Pick up hiddenID from row
-    weak var getHiddenID_delegate:GetHiddenID?
-    weak var refresh_delegate:RefreshtableViewtabMain?
-    weak var refresh_delegate2:RefreshtableViewtabSchedule?
+    weak var getHiddenID_delegate: GetHiddenID?
+    weak var refresh_delegate: RefreshtableViewtabMain?
+    weak var refresh_delegate2: RefreshtableViewtabSchedule?
     // Dismisser
-    weak var dismiss_delegate:DismissViewController?
-    
-    var hiddendID:Int?
+    weak var dismiss_delegate: DismissViewController?
+
+    var hiddendID: Int?
     // Data for tableView
-    var data:[NSMutableDictionary]?
+    var data: [NSMutableDictionary]?
     // Notification center
-    var observationCenter : NSObjectProtocol!
-    
+    var observationCenter: NSObjectProtocol!
+
     @IBOutlet weak var scheduletable: NSTableView!
-    
+
     // Close view and either stop or delete Schedules
     @IBAction func close(_ sender: NSButton) {
         self.dismiss_delegate?.dismiss_view(viewcontroller: self)
     }
-    
+
     @IBAction func update(_ sender: NSButton) {
         if let data = self.data {
             SharingManagerSchedule.sharedInstance.deleteOrStopSchedules(data : data)
@@ -48,7 +48,7 @@ class ViewControllerScheduleDetails : NSViewController {
         }
         self.dismiss_delegate?.dismiss_view(viewcontroller: self)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         if let pvc = self.presenting as? ViewControllertabMain {
@@ -67,12 +67,12 @@ class ViewControllerScheduleDetails : NSViewController {
             self.hiddendID = self.getHiddenID_delegate?.gethiddenID()
         }
     }
-    
+
     override func viewDidAppear() {
         super.viewDidAppear()
         self.hiddendID = self.getHiddenID_delegate?.gethiddenID()
         self.data = SharingManagerSchedule.sharedInstance.readScheduledata(self.hiddendID!)
-        
+
         GlobalMainQueue.async(execute: { () -> Void in
             self.scheduletable.reloadData()
         })
@@ -83,7 +83,7 @@ class ViewControllerScheduleDetails : NSViewController {
 }
 
 extension ViewControllerScheduleDetails : NSTableViewDataSource {
-    
+
     func numberOfRows(in tableView: NSTableView) -> Int {
         if (self.hiddendID != nil && self.data != nil) {
             return (self.data!.count)
@@ -91,15 +91,15 @@ extension ViewControllerScheduleDetails : NSTableViewDataSource {
             return 0
         }
     }
-    
+
 }
 
 extension ViewControllerScheduleDetails : NSTableViewDelegate {
-    
+
     // TableView delegates
     @objc(tableView:objectValueForTableColumn:row:) func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
         if (row < self.data!.count) {
-            let object:NSMutableDictionary = self.data![row]
+            let object: NSMutableDictionary = self.data![row]
             if ((tableColumn!.identifier) == "stopCellID" || (tableColumn!.identifier) == "deleteCellID") {
                 return object[tableColumn!.identifier] as? Int
             } else {
@@ -121,5 +121,5 @@ extension ViewControllerScheduleDetails : NSTableViewDelegate {
             }
         }
     }
-    
+
 }

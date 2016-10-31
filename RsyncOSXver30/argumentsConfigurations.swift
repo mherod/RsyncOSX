@@ -8,23 +8,23 @@
 import Foundation
 
 // Struct for to store info for ONE configuration.
-// Struct is storing rsync arguments for real run, dryrun 
+// Struct is storing rsync arguments for real run, dryrun
 // and a version to show in view of both
 struct argumentsOneConfig {
-   
-    var task:String
-    var backupID:String
-    var config:configuration
-    var arg:[String]?
-    var argdryRun:[String]?
-    var argDisplay:[String]?
-    var argdryRunDisplay:[String]?
-    var serverdate:String?
-    var localdate:String?
-    var index:Int
-    var warning:Bool = false
-    
-    init(backupID:String, task:String, config:configuration, index:Int) {
+
+    var task: String
+    var backupID: String
+    var config: configuration
+    var arg: [String]?
+    var argdryRun: [String]?
+    var argDisplay: [String]?
+    var argdryRunDisplay: [String]?
+    var serverdate: String?
+    var localdate: String?
+    var index: Int
+    var warning: Bool = false
+
+    init(backupID: String, task: String, config: configuration, index: Int) {
         self.backupID = backupID
         self.task = task
         self.config = config
@@ -32,7 +32,7 @@ struct argumentsOneConfig {
     }
 }
 
-// Struct is calculating parameters for all jobs based upon the 
+// Struct is calculating parameters for all jobs based upon the
 // stored configuration.
 
 struct argumentsConfigurations {
@@ -42,7 +42,7 @@ struct argumentsConfigurations {
     var rsyncArguments: argumentsOneConfig?
     // Object for preparing rsync arguments
     let getrsyncArguments = rsyncProcessArguments()
-    
+
     init(rsyncArguments: argumentsOneConfig) {
         self.rsyncArguments = rsyncArguments
         self.rsyncArguments!.task = rsyncArguments.config.task
@@ -54,4 +54,3 @@ struct argumentsConfigurations {
         self.rsyncArguments!.argdryRunDisplay = getrsyncArguments.argumentsRsync(rsyncArguments.config, dryRun: true, forDisplay: true)
     }
 }
-
